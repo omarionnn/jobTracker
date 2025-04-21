@@ -25,3 +25,11 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+/* Fix for input text visibility */
+input, 
+textarea, 
+select {
+  color: #000000 !important; /* Force black text in inputs */
+  background-color: #ffffff;  /* Force white background */
+}
