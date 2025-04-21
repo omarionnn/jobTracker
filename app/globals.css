@@ -8,12 +8,22 @@
   --background-end-rgb: 255, 255, 255;
 }
 
+/* Disable dark mode styling for now to fix input issues */
+/*
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
   }
+}
+*/
+
+/* Force light mode instead */
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 245, 245, 245;
+  --background-end-rgb: 255, 255, 255;
 }
 
 body {
@@ -26,10 +36,37 @@ body {
     rgb(var(--background-start-rgb));
 }
 
-/* Fix for input text visibility */
+/* Fix for input text visibility - stronger override */
 input, 
 textarea, 
-select {
+select,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="url"],
+input[type="search"],
+input[type="number"] {
   color: #000000 !important; /* Force black text in inputs */
-  background-color: #ffffff;  /* Force white background */
+  -webkit-text-fill-color: #000000 !important; /* Safari & iOS fix */
+  background-color: #ffffff !important;  /* Force white background */
+  caret-color: #000000 !important; /* Make cursor visible */
+}
+
+/* Ensure placeholder text is visible */
+::placeholder {
+  color: #6b7280 !important; /* Gray-500 */
+  opacity: 1 !important;
+}
+
+/* Fix for webkit browsers */
+::-webkit-input-placeholder {
+  color: #6b7280 !important; 
+}
+
+/* Disable dark mode for form elements */
+@media (prefers-color-scheme: dark) {
+  input, textarea, select {
+    color-scheme: light !important;
+  }
 }
