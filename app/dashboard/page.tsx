@@ -10,6 +10,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [applications, setApplications] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const checkUser = async () => {
@@ -72,6 +73,27 @@ export default function Dashboard() {
 
     return { total, applied, interviewing, offered, rejected };
   };
+
+  // Filter applications based on search query
+  const filteredApplications = applications.filter(app => {
+    if (!searchQuery.trim()) return true;
+    
+    const query = searchQuery.toLowerCase();
+    
+    // Search by company name
+    if (app.company?.name?.toLowerCase().includes(query)) return true;
+    
+    // Search by position
+    if (app.position?.toLowerCase().includes(query)) return true;
+    
+    // Search by status
+    if (app.status?.toLowerCase().includes(query)) return true;
+    
+    // Search by location
+    if (app.company?.location?.toLowerCase().includes(query)) return true;
+    
+    return false;
+  });
 
   const stats = getStats();
 
@@ -143,6 +165,24 @@ export default function Dashboard() {
               </Link>
             </div>
           </div>
+          
+          {/* Search Bar */}
+          <div className="px-6 py-3 border-b border-gray-200">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <svg className="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                </svg>
+              </div>
+              <input
+                type="text"
+                id="search"
+                className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Search applications by company, position, or status..."
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
 
           {applications.length === 0 ? (
             <div className="p-8 text-center">
@@ -154,6 +194,17 @@ export default function Dashboard() {
               >
                 Add Application
               </Link>
+            </div>
+          ) : filteredApplications.length === 0 ? (
+            <div className="p-8 text-center">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No matching applications</h3>
+              <p className="text-gray-600 mb-4">Try a different search query or clear your search.</p>
+              <button 
+                onClick={() => setSearchQuery('')}
+                className="inline-block bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors"
+              >
+                Clear Search
+              </button>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -178,7 +229,7 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {applications.map((app) => (
+                  {filteredApplications.map((app) => (
                     <tr key={app.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">{app.company?.name || 'Unknown Company'}</div>
